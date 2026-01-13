@@ -1,0 +1,82 @@
+### 상품 등록 테스트
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "노트북",
+  "description": "고성능 게이밍 노트북",
+  "price": 1500000,
+  "stock": 10,
+  "imageUrl": "https://example.com/laptop.jpg",
+  "category": "전자제품"
+}
+
+###
+
+### 상품 등록 테스트 2
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "무선 마우스",
+  "description": "인체공학적 디자인 무선 마우스",
+  "price": 35000,
+  "stock": 50,
+  "imageUrl": "https://example.com/mouse.jpg",
+  "category": "전자제품"
+}
+
+###
+
+### 상품 등록 테스트 3
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "책상",
+  "description": "높이 조절 가능한 스탠딩 책상",
+  "price": 250000,
+  "stock": 15,
+  "imageUrl": "https://example.com/desk.jpg",
+  "category": "가구"
+}
+
+###
+
+### 모든 상품 조회
+GET http://localhost:8080/api/products
+
+###
+
+### 특정 상품 조회 (ID: 1)
+GET http://localhost:8080/api/products/1
+
+###
+
+### 카테고리별 조회
+GET http://localhost:8080/api/products/category/전자제품
+
+###
+
+### 상품 검색
+GET http://localhost:8080/api/products/search?keyword=노트북
+
+###
+
+### 상품 수정 (ID: 1)
+PUT http://localhost:8080/api/products/1
+Content-Type: application/json
+
+{
+  "name": "노트북",
+  "description": "고성능 게이밍 노트북 (업그레이드 버전)",
+  "price": 1600000,
+  "stock": 8,
+  "imageUrl": "https://example.com/laptop.jpg",
+  "category": "전자제품"
+}
+
+###
+
+### 상품 삭제 (ID: 1)
+DELETE http://localhost:8080/api/products/1
