@@ -37,7 +37,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 인증 불필요 경로
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/products", "/api/products/**").permitAll()
+                        // 상품 조회는 모든 사용자에게 허용
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/products/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/products").permitAll()
                         // 나머지는 인증 필요
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())

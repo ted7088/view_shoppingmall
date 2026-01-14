@@ -26,21 +26,21 @@ public class ProductController {
 
     // 상품 ID로 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable("id") Long id) {
         ProductDTO product = productService.getProductById(id);
         return ResponseEntity.ok(product);
     }
 
     // 카테고리별 상품 조회
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<ProductDTO>> getProductsByCategory(@PathVariable String category) {
+    public ResponseEntity<List<ProductDTO>> getProductsByCategory(@PathVariable("category") String category) {
         List<ProductDTO> products = productService.getProductsByCategory(category);
         return ResponseEntity.ok(products);
     }
 
     // 상품명 검색
     @GetMapping("/search")
-    public ResponseEntity<List<ProductDTO>> searchProducts(@RequestParam String keyword) {
+    public ResponseEntity<List<ProductDTO>> searchProducts(@RequestParam("keyword") String keyword) {
         List<ProductDTO> products = productService.searchProducts(keyword);
         return ResponseEntity.ok(products);
     }
@@ -55,7 +55,7 @@ public class ProductController {
     // 상품 수정
     @PutMapping("/{id}")
     public ResponseEntity<ProductDTO> updateProduct(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestBody ProductDTO productDTO) {
         ProductDTO updatedProduct = productService.updateProduct(id, productDTO);
         return ResponseEntity.ok(updatedProduct);
@@ -63,7 +63,7 @@ public class ProductController {
 
     // 상품 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable("id") Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }

@@ -227,6 +227,12 @@ const goBack = () => {
   border: 1px solid #ddd;
   border-radius: 4px;
   box-sizing: border-box;
+  color: #1a202c;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #a0aec0;
 }
 
 .form-group input:focus,

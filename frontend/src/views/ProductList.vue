@@ -222,6 +222,11 @@ const goToNewProduct = () => {
   border-radius: 12px;
   transition: all 0.3s ease;
   background: white;
+  color: #1a202c;
+}
+
+.search-input::placeholder {
+  color: #a0aec0;
 }
 
 .search-input:focus {
