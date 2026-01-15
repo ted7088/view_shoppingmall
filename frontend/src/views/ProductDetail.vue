@@ -47,6 +47,9 @@
           </div>
         </div>
       </div>
+
+      <!-- 리뷰 섹션 -->
+      <ReviewSection :productId="product.id" />
     </div>
   </div>
 </template>
@@ -55,6 +58,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { getProductById, deleteProduct } from '../services/productService';
+import ReviewSection from '../components/ReviewSection.vue';
 
 const router = useRouter();
 const route = useRoute();
