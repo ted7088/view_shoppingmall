@@ -40,6 +40,8 @@ public class SecurityConfig {
                         // 상품 조회는 모든 사용자에게 허용
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/products/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/products").permitAll()
+                        // 리뷰 조회는 모든 사용자에게 허용 (작성/삭제는 인증 필요)
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/reviews/**").permitAll()
                         // 나머지는 인증 필요
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
