@@ -4,6 +4,9 @@ import ProductDetail from '../views/ProductDetail.vue';
 import ProductForm from '../views/ProductForm.vue';
 import Login from '../views/Login.vue';
 import Signup from '../views/Signup.vue';
+import QnaList from '../views/QnaList.vue';
+import QnaDetail from '../views/QnaDetail.vue';
+import QnaForm from '../views/QnaForm.vue';
 import authService from '../services/authService';
 
 const routes = [
@@ -40,6 +43,22 @@ const routes = [
         name: 'ProductEdit',
         component: ProductForm,
         meta: { requiresAuth: true },
+    },
+    {
+        path: '/qna',
+        name: 'QnaList',
+        component: QnaList,
+    },
+    {
+        path: '/qna/new',
+        name: 'QnaNew',
+        component: QnaForm,
+        meta: { requiresAuth: true },
+    },
+    {
+        path: '/qna/:id',
+        name: 'QnaDetail',
+        component: QnaDetail,
     },
 ];
 
