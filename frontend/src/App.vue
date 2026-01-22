@@ -11,6 +11,10 @@
             <span class="nav-icon">📦</span>
             상품 목록
           </router-link>
+          <router-link v-if="isLoggedIn" to="/wishlist" class="nav-link">
+            <span class="nav-icon">♥</span>
+            찜 목록
+          </router-link>
           <router-link to="/qna" class="nav-link">
             <span class="nav-icon">❓</span>
             Q&A

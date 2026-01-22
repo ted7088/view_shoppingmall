@@ -7,6 +7,7 @@ import Signup from '../views/Signup.vue';
 import QnaList from '../views/QnaList.vue';
 import QnaDetail from '../views/QnaDetail.vue';
 import QnaForm from '../views/QnaForm.vue';
+import WishlistPage from '../views/WishlistPage.vue';
 import authService from '../services/authService';
 
 const routes = [
@@ -45,6 +46,12 @@ const routes = [
         meta: { requiresAuth: true },
     },
     {
+        path: '/wishlist',
+        name: 'Wishlist',
+        component: WishlistPage,
+        meta: { requiresAuth: true },
+    },
+    {
         path: '/qna',
         name: 'QnaList',
         component: QnaList,
@@ -65,6 +72,19 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes,
+    // 페이지 전환 시 스크롤 위치 제어
+    scrollBehavior(to, from, savedPosition) {
+        // 뒤로가기/앞으로가기 시 이전 위치로 복원
+        if (savedPosition) {
+            return savedPosition;
+        }
+        // 해시가 있으면 해당 위치로 스크롤
+        if (to.hash) {
+            return { el: to.hash, behavior: 'smooth' };
+        }
+        // 기본: 페이지 맨 위로 스크롤
+        return { top: 0, behavior: 'smooth' };
+    },
 });
 
 // 네비게이션 가드

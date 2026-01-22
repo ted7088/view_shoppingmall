@@ -41,6 +41,15 @@
             </span>
           </div>
 
+          <button 
+            @click="toggleWishlist" 
+            :disabled="wishlistLoading"
+            class="btn-wishlist"
+          >
+            <span class="heart-icon">{{ isWishlisted ? '♥' : '♡' }}</span>
+            {{ isWishlisted ? '찜 취소' : '찜하기' }}
+          </button>
+
           <div class="description-section">
             <h3>상품 설명</h3>
             <p>{{ product.description || '상품 설명이 없습니다.' }}</p>
@@ -58,6 +67,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { getProductById, deleteProduct } from '../services/productService';
+import { checkWishlistStatus, addToWishlist, removeFromWishlist } from '../services/wishlistService';
 import ReviewSection from '../components/ReviewSection.vue';
 
 const router = useRouter();
@@ -66,6 +76,8 @@ const route = useRoute();
 const product = ref(null);
 const loading = ref(false);
 const error = ref(null);
+const isWishlisted = ref(false);
+const wishlistLoading = ref(false);
 
 onMounted(() => {
   loadProduct();
@@ -79,6 +91,9 @@ const loadProduct = async () => {
   try {
     const productId = route.params.id;
     product.value = await getProductById(productId);
+    
+    // 찜하기 상태 확인
+    await checkWishlist();
   } catch (err) {
     error.value = '상품 정보를 불러오는데 실패했습니다.';
     console.error(err);
@@ -115,6 +130,53 @@ const handleDelete = async () => {
   } catch (err) {
     alert('상품 삭제에 실패했습니다.');
     console.error(err);
+  }
+};
+
+// 찜하기 상태 확인
+const checkWishlist = async () => {
+  try {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      isWishlisted.value = false;
+      return;
+    }
+    
+    isWishlisted.value = await checkWishlistStatus(product.value.id);
+  } catch (err) {
+    console.error('찜 상태 확인 실패:', err);
+    isWishlisted.value = false;
+  }
+};
+
+// 찜하기 토글
+const toggleWishlist = async () => {
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    alert('로그인이 필요합니다.');
+    router.push('/login');
+    return;
+  }
+  
+  if (wishlistLoading.value) return;
+  
+  wishlistLoading.value = true;
+  
+  try {
+    if (isWishlisted.value) {
+      await removeFromWishlist(product.value.id);
+      isWishlisted.value = false;
+      alert('찜 목록에서 삭제되었습니다.');
+    } else {
+      await addToWishlist(product.value.id);
+      isWishlisted.value = true;
+      alert('찜 목록에 추가되었습니다.');
+    }
+  } catch (err) {
+    alert('요청에 실패했습니다.');
+    console.error(err);
+  } finally {
+    wishlistLoading.value = false;
   }
 };
 </script>
@@ -274,6 +336,38 @@ const handleDelete = async () => {
 
 .stock.out-of-stock {
   color: #f44336;
+}
+
+.btn-wishlist {
+  width: 100%;
+  background: white;
+  border: 2px solid #e91e63;
+  color: #e91e63;
+  padding: 14px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-wishlist:hover:not(:disabled) {
+  background: #e91e63;
+  color: white;
+}
+
+.btn-wishlist:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.heart-icon {
+  font-size: 20px;
 }
 
 .description-section {

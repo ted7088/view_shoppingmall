@@ -2,6 +2,14 @@
   <div class="product-card" @click="goToDetail">
     <div class="product-image">
       <img :src="product.imageUrl || 'https://via.placeholder.com/300x300/667eea/ffffff?text=Product'" :alt="product.name">
+      <button 
+        @click="toggleWishlist"
+        :disabled="wishlistLoading"
+        class="wishlist-btn"
+        :class="{ wishlisted: isWishlisted }"
+      >
+        <span class="heart">{{ isWishlisted ? '♥' : '♡' }}</span>
+      </button>
       <div class="image-overlay">
         <span class="view-details">자세히 보기 →</span>
       </div>
@@ -24,7 +32,9 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { checkWishlistStatus, addToWishlist, removeFromWishlist } from '../services/wishlistService';
 
 // Props 정의 - 부모 컴포넌트로부터 상품 데이터를 받음
 const props = defineProps({
@@ -35,6 +45,58 @@ const props = defineProps({
 });
 
 const router = useRouter();
+const isWishlisted = ref(false);
+const wishlistLoading = ref(false);
+
+onMounted(() => {
+  checkWishlist();
+});
+
+// 찜하기 상태 확인
+const checkWishlist = async () => {
+  try {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      isWishlisted.value = false;
+      return;
+    }
+    
+    isWishlisted.value = await checkWishlistStatus(props.product.id);
+  } catch (err) {
+    console.error('찜 상태 확인 실패:', err);
+    isWishlisted.value = false;
+  }
+};
+
+// 찜하기 토글
+const toggleWishlist = async (event) => {
+  event.stopPropagation(); // 카드 클릭 이벤트 전파 방지
+  
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    alert('로그인이 필요합니다.');
+    router.push('/login');
+    return;
+  }
+  
+  if (wishlistLoading.value) return;
+  
+  wishlistLoading.value = true;
+  
+  try {
+    if (isWishlisted.value) {
+      await removeFromWishlist(props.product.id);
+      isWishlisted.value = false;
+    } else {
+      await addToWishlist(props.product.id);
+      isWishlisted.value = true;
+    }
+  } catch (err) {
+    console.error('찜하기 실패:', err);
+  } finally {
+    wishlistLoading.value = false;
+  }
+};
 
 // 상세 페이지로 이동
 const goToDetail = () => {
@@ -77,6 +139,55 @@ const formatPrice = (price) => {
   height: 100%;
   object-fit: cover;
   transition: transform 0.4s ease;
+}
+
+.wishlist-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.wishlist-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.wishlist-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.wishlist-btn .heart {
+  font-size: 20px;
+  color: #e91e63;
+  transition: transform 0.2s ease;
+}
+
+.wishlist-btn.wishlisted .heart {
+  animation: heartBeat 0.3s ease;
+}
+
+@keyframes heartBeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
 }
 
 .product-card:hover .product-image img {
